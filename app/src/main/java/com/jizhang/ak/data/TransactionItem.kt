@@ -1,7 +1,11 @@
 package com.jizhang.ak.data
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "transactions")
 data class TransactionItem(
-    val id: String = java.util.UUID.randomUUID().toString(), // Auto-generate ID
+    @PrimaryKey val id: String = java.util.UUID.randomUUID().toString(), // Auto-generate ID
     val amount: Double,
     val type: TransactionType, // Enum: INCOME, EXPENSE
     val categoryName: String,

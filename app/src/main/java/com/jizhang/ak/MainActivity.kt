@@ -15,14 +15,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
+import com.jizhang.ak.data.AppDatabase
 import com.jizhang.ak.ui.*
 import com.jizhang.ak.ui.theme.JzTheme
 import com.jizhang.ak.viewmodel.TransactionViewModel // 导入 ViewModel
+import com.jizhang.ak.viewmodel.TransactionViewModelFactory
 
 sealed class Screen(val route: String, val label: String, val icon: ImageVector) {
     object TransactionList : Screen("transaction_list", "流水", Icons.AutoMirrored.Filled.List)
@@ -54,8 +57,10 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainAppScreen() {
     val navController = rememberNavController()
-    // ViewModel 在 NavHost 级别创建，以便共享
-    val transactionViewModel: TransactionViewModel = viewModel()
+    val context = LocalContext.current
+    val db = AppDatabase.getDatabase(context.applicationContext)
+    val transactionDao = db.transactionDao()
+    val transactionViewModel: TransactionViewModel = viewModel(factory = TransactionViewModelFactory(transactionDao))
 
     Scaffold(
         bottomBar = {
