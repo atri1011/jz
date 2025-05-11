@@ -45,12 +45,7 @@ fun CategoryManagementScreen() {
     )
 
     Scaffold(
-        topBar = {
-            Column {
-                MockStatusBar()
-                ScreenTitle("分类管理")
-            }
-        },
+        // topBar is removed
         floatingActionButton = {
             FloatingActionButton(onClick = { Toast.makeText(context, "添加新分类功能待实现", Toast.LENGTH_SHORT).show() }) {
                 Icon(Icons.Filled.Add, contentDescription = "添加新分类")
@@ -58,16 +53,36 @@ fun CategoryManagementScreen() {
         },
         floatingActionButtonPosition = FabPosition.End
     ) { paddingValues ->
-        LazyColumn(
+        Column( // Wrap content in a Column for title and list
             modifier = Modifier
                 .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background) // Apply background to the main column
                 .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.background)
-                .padding(vertical = 8.dp)
+                .padding(horizontal = 16.dp) // Consistent horizontal padding
         ) {
-            items(sampleCategories) { category ->
-                CategoryRow(category = category)
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp)) // 重命名为 HorizontalDivider
+            // Mock Status Bar (if needed)
+            // MockStatusBar()
+
+            Spacer(modifier = Modifier.height(16.dp)) // Space from top
+
+            // Title
+            Text(
+                text = "分类管理",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 16.dp).align(Alignment.Start)
+            )
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    // .background(MaterialTheme.colorScheme.background) // Background is on parent
+                    .padding(vertical = 8.dp) // Keep vertical padding for the list itself
+            ) {
+                items(sampleCategories) { category ->
+                    CategoryRow(category = category)
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 0.dp)) // Adjust divider padding if needed
+                }
             }
         }
     }

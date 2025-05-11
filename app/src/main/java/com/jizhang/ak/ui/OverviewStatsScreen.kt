@@ -45,21 +45,30 @@ fun OverviewStatsScreen(viewModel: TransactionViewModel = viewModel()) {
     val dailySummaries by viewModel.dailySummariesFlow.collectAsState()
 
     Scaffold(
-        topBar = {
-            Column {
-                MockStatusBar() // Assuming this is a custom composable for status bar padding
-                ScreenTitle("统计图表") // Assuming this is a custom composable for screen title
-            }
-        }
+        // topBar is removed
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background) // Add background
                 .padding(paddingValues)
-                .padding(16.dp)
+                .padding(horizontal = 16.dp) // Consistent horizontal padding
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Mock Status Bar (if needed)
+            // MockStatusBar()
+
+            Spacer(modifier = Modifier.height(16.dp)) // Space from top
+
+            // Title
+            Text(
+                text = "统计图表",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 16.dp).align(Alignment.Start)
+            )
+
             // 顶部收支总览
             OverviewSummaryCard(
                 totalIncome = totalIncome,

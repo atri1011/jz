@@ -47,26 +47,40 @@ fun SettingsScreen() { // 移除 authViewModel 参数
     )
 
     Scaffold(
-        topBar = {
-            Column {
-                MockStatusBar()
-                ScreenTitle("设置")
-            }
-        }
+        // topBar is removed
     ) { paddingValues ->
-        LazyColumn(
+        Column( // Wrap content in a Column for title and list
             modifier = Modifier
                 .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background) // Apply background to the main column
                 .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.background)
+                // .padding(horizontal = 16.dp) // Settings items have their own padding, so maybe not needed here
         ) {
-            items(settingsItems) { item ->
-                SettingRow(item = item)
-                HorizontalDivider(modifier = Modifier.padding(start = 72.dp))
-            }
-            // item { // 移除退出登录按钮
-            //     Spacer(modifier = Modifier.height(16.dp))
-            //     Button(
+            // Mock Status Bar (if needed)
+            // MockStatusBar()
+
+            Spacer(modifier = Modifier.height(16.dp)) // Space from top
+
+            // Title
+            Text(
+                text = "设置",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                modifier = Modifier.padding(start = 16.dp, bottom = 16.dp).align(Alignment.Start) // Add start padding for title
+            )
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                // .background(MaterialTheme.colorScheme.background) // Background is on parent
+            ) {
+                items(settingsItems) { item ->
+                    SettingRow(item = item)
+                    HorizontalDivider(modifier = Modifier.padding(start = 72.dp)) // Keep divider as is or adjust
+                }
+                // item { // 移除退出登录按钮
+                //     Spacer(modifier = Modifier.height(16.dp))
+                //     Button(
             //         onClick = {
             //             coroutineScope.launch {
             //                 // authViewModel.logout() // authViewModel 已移除
@@ -86,6 +100,7 @@ fun SettingsScreen() { // 移除 authViewModel 参数
             // }
         }
     }
+}
 }
 
 @Composable

@@ -69,12 +69,7 @@ fun AddTransactionScreen(navController: NavController, transactionViewModel: Tra
     }
 
     Scaffold(
-        topBar = {
-            Column {
-                MockStatusBar()
-                ScreenTitle("记一笔")
-            }
-        },
+        // topBar is removed
         bottomBar = {
             Button(
                 onClick = {
@@ -112,11 +107,25 @@ fun AddTransactionScreen(navController: NavController, transactionViewModel: Tra
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background) // Add background to the main column
                 .padding(paddingValues)
-                .padding(16.dp)
+                .padding(horizontal = 16.dp) // Consistent horizontal padding
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Mock Status Bar (if needed)
+            // MockStatusBar()
+
+            Spacer(modifier = Modifier.height(16.dp)) // Space from top
+
+            // Title
+            Text(
+                text = "记一笔",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 16.dp).align(Alignment.Start)
+            )
+
             TabRow(selectedTabIndex = selectedTabIndex) {
                 tabs.forEachIndexed { index, title ->
                     Tab(

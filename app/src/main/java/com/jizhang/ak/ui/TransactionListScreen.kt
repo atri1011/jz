@@ -13,10 +13,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowLeft // Added
 import androidx.compose.material.icons.automirrored.filled.ArrowRight // Added
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember // Added
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -114,6 +111,7 @@ fun TransactionRow(item: TransactionItem) {
 fun TransactionListScreen(transactionViewModel: TransactionViewModel = viewModel()) {
     val transactions by transactionViewModel.transactions.collectAsState()
     val selectedYearMonthText by transactionViewModel.selectedYearMonth.collectAsState() // "YYYY-MM"
+    var searchQuery by remember { mutableStateOf("") }
 
     // Format selectedYearMonthText for display, e.g., "YYYY年MM月"
     val displayMonthFormat = remember { SimpleDateFormat("yyyy年MM月", Locale.getDefault()) }
@@ -132,53 +130,86 @@ fun TransactionListScreen(transactionViewModel: TransactionViewModel = viewModel
         }
     }
 
-
     Scaffold(
-        topBar = {
-            Column {
-                MockStatusBar()
-                ScreenTitle("交易流水")
-                // Month Selector UI
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = { transactionViewModel.selectPreviousMonth() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowLeft, contentDescription = "上个月")
-                    }
-                    Text(
-                        text = displayableMonth,
-                        style = MaterialTheme.typography.titleMedium, // Or h6 if you prefer larger
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    IconButton(onClick = { transactionViewModel.selectNextMonth() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowRight, contentDescription = "下个月")
-                    }
+        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(horizontal = 16.dp) // Add horizontal padding for the whole column
+        ) {
+            // Mock Status Bar (if needed, or remove if system handles it)
+            // MockStatusBar() // Consider if this is still needed or how it fits the new design
+
+            Spacer(modifier = Modifier.height(16.dp)) // Space from top
+
+            // Title
+            Text(
+                text = "交易流水",
+                style = MaterialTheme.typography.headlineMedium, // Or a larger style
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
+            // Search Bar
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                placeholder = { Text("搜索交易记录") },
+                leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "搜索") },
+                singleLine = true
+            )
+
+            // Month Selector UI
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp), // Add padding below month selector
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { transactionViewModel.selectPreviousMonth() }) {
+                    Icon(Icons.AutoMirrored.Filled.ArrowLeft, contentDescription = "上个月")
+                }
+                Text(
+                    text = displayableMonth,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+                IconButton(onClick = { transactionViewModel.selectNextMonth() }) {
+                    Icon(Icons.AutoMirrored.Filled.ArrowRight, contentDescription = "下个月")
                 }
             }
-        }
-    ) { paddingValues ->
-        if (transactions.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("暂无交易记录", fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .background(MaterialTheme.colorScheme.background)
-                    .padding(horizontal = 8.dp)
-            ) {
-                items(transactions.sortedByDescending { it.date }) { transaction -> // 按日期降序排列
-                    TransactionRow(item = transaction)
+
+            // Transactions List
+            if (transactions.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("暂无交易记录", fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        // .background(MaterialTheme.colorScheme.background) // Background is now on the parent Column/Scaffold
+                        .padding(horizontal = 0.dp) // Adjust if list items have their own padding
+                ) {
+                    items(transactions.filter {
+                        // Basic search filter (case-insensitive)
+                        // You might want to search in categoryName, note, etc.
+                        it.categoryName.contains(searchQuery, ignoreCase = true) ||
+                        (it.note?.contains(searchQuery, ignoreCase = true) == true)
+                    }.sortedByDescending { it.date }) { transaction ->
+                        TransactionRow(item = transaction)
+                    }
                 }
             }
         }
