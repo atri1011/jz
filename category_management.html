@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分类管理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .status-bar {
+            height: 44px;
+            background-color: #f8f8f8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            font-size: 14px;
+            color: #000;
+            border-bottom: 1px solid #e0e0e0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .status-bar .time {
+            font-weight: 600;
+        }
+        .status-bar .indicators i {
+            margin-left: 5px;
+        }
+        .header-nav { /* 使用与 add_transaction 类似的导航栏 */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: #f8f8f8;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .header-nav .title {
+            font-size: 17px;
+            font-weight: 600;
+            position: absolute; /* 绝对定位实现居中 */
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .header-nav .action-btn {
+            color: #007aff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .category-list-section {
+            margin-top: 10px;
+        }
+        .section-title {
+            font-size: 14px;
+            color: #6d6d72; /* iOS section title color */
+            padding: 8px 15px;
+            background-color: #efeff4; /* iOS section background */
+            border-top: 1px solid #c8c7cc;
+            border-bottom: 1px solid #c8c7cc;
+        }
+        .category-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            background-color: white;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .category-item:last-child {
+            border-bottom: none;
+        }
+        .category-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 16px;
+        }
+        .category-name {
+            flex-grow: 1;
+            font-size: 16px;
+            color: #333;
+        }
+        .edit-icon {
+            color: #c7c7cc; /* iOS chevron color or edit icon color */
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- 模拟 iOS 状态栏 -->
+    <div class="status-bar">
+        <div class="time">9:41</div>
+        <div class="indicators">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-battery-three-quarters"></i>
+        </div>
+    </div>
+
+    <!-- 页面导航和标题 -->
+    <div class="header-nav">
+        <span>&nbsp;</span> <!-- 左侧占位 -->
+        <span class="title">分类管理</span>
+        <span class="action-btn">编辑</span>
+    </div>
+
+    <!-- 支出分类 -->
+    <div class="category-list-section">
+        <div class="section-title">支出分类</div>
+        
+        <div class="category-item">
+            <span class="category-icon bg-red-100 text-red-500"><i class="fas fa-utensils"></i></span>
+            <span class="category-name">餐饮</span>
+            <i class="fas fa-pencil-alt edit-icon"></i> <!-- 或者 fa-chevron-right -->
+        </div>
+        <div class="category-item">
+            <span class="category-icon bg-blue-100 text-blue-500"><i class="fas fa-bus"></i></span>
+            <span class="category-name">交通</span>
+            <i class="fas fa-pencil-alt edit-icon"></i>
+        </div>
+        <div class="category-item">
+            <span class="category-icon bg-yellow-100 text-yellow-500"><i class="fas fa-shopping-bag"></i></span>
+            <span class="category-name">购物</span>
+            <i class="fas fa-pencil-alt edit-icon"></i>
+        </div>
+        <div class="category-item">
+            <span class="category-icon bg-purple-100 text-purple-500"><i class="fas fa-film"></i></span>
+            <span class="category-name">娱乐</span>
+            <i class="fas fa-pencil-alt edit-icon"></i>
+        </div>
+        <div class="category-item">
+            <span class="category-icon bg-indigo-100 text-indigo-500"><i class="fas fa-home"></i></span>
+            <span class="category-name">住房</span>
+            <i class="fas fa-pencil-alt edit-icon"></i>
+        </div>
+        <div class="category-item">
+            <span class="category-icon bg-pink-100 text-pink-500"><i class="fas fa-heartbeat"></i></span>
+            <span class="category-name">医疗健康</span>
+            <i class="fas fa-pencil-alt edit-icon"></i>
+        </div>
+        <div class="category-item">
+            <span class="category-icon bg-teal-100 text-teal-500"><i class="fas fa-graduation-cap"></i></span>
+            <span class="category-name">学习</span>
+            <i class="fas fa-pencil-alt edit-icon"></i>
+        </div>
+    </div>
+
+    <!-- 收入分类 -->
+    <div class="category-list-section mt-4">
+        <div class="section-title">收入分类</div>
+        <div class="category-item">
+            <span class="category-icon bg-green-100 text-green-500"><i class="fas fa-briefcase"></i></span>
+            <span class="category-name">工资</span>
+            <i class="fas fa-pencil-alt edit-icon"></i>
+        </div>
+        <div class="category-item">
+            <span class="category-icon bg-cyan-100 text-cyan-500"><i class="fas fa-hand-holding-usd"></i></span>
+            <span class="category-name">理财收益</span>
+            <i class="fas fa-pencil-alt edit-icon"></i>
+        </div>
+        <div class="category-item">
+            <span class="category-icon bg-orange-100 text-orange-500"><i class="fas fa-gifts"></i></span>
+            <span class="category-name">红包</span>
+            <i class="fas fa-pencil-alt edit-icon"></i>
+        </div>
+    </div>
+
+    <!-- 添加新分类按钮 -->
+    <div class="p-4 mt-6">
+        <button class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg text-lg">
+            <i class="fas fa-plus mr-2"></i> 添加新分类
+        </button>
+    </div>
+
+    <!-- 模拟底部安全区域 -->
+    <div class="h-16"></div>
+
+</body>
+</html>

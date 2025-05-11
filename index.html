@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人记账 App 原型</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        body {
+            background-color: #f0f0f0; /* 页面背景色，用于区分 iframe */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+            padding-bottom: 100px; /* 为底部 TabBar 留出空间 */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        .iphone-frame-container {
+            width: 393px; /* iPhone 15 Pro 逻辑宽度 */
+            margin-bottom: 20px;
+            border-radius: 30px; /* 圆角边框 */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden; /* 确保 iframe 圆角生效 */
+            background-color: #fff; /* iframe 背景，如果 iframe 本身透明 */
+        }
+        .iphone-frame-container h2 {
+            text-align: center;
+            font-size: 1rem;
+            padding: 8px 0;
+            background-color: #e9ecef;
+            color: #495057;
+            margin: 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        iframe {
+            width: 100%;
+            border: none;
+            /* 高度由内容决定，或者可以设置一个最小高度/固定高度 */
+            /* min-height: 700px; */ /* 示例高度，后续根据内容调整 */
+        }
+
+        .bottom-tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            max-width: 393px; /* 与 iPhone 宽度一致 */
+            margin: 0 auto; /* 居中 */
+            height: 80px; /* 增加高度以容纳文字和图标，并模拟iOS风格 */
+            background-color: #f8f8f8; /* iOS TabBar 常用背景色 */
+            border-top: 1px solid #d1d1d6; /* iOS TabBar 边框颜色 */
+            display: flex;
+            justify-content: space-around;
+            align-items: center; /* 垂直居中 */
+            padding-bottom: env(safe-area-inset-bottom, 10px); /* 适配 iPhone X 及以上底部安全区域, 增加一些padding */
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
+            z-index: 1000;
+        }
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #8e8e93; /* iOS 未选中 Tab 文字颜色 */
+            font-size: 10px; /* iOS Tab 文字大小 */
+            text-decoration: none;
+            flex-grow: 1;
+            padding-top: 6px; /* 图标和文字间距 */
+        }
+        .tab-item i {
+            font-size: 22px; /* 图标大小 */
+            margin-bottom: 4px; /* 图标和文字间距 */
+        }
+        .tab-item.active {
+            color: #007aff; /* iOS 选中 Tab 文字颜色 */
+        }
+        .tab-item-add {
+            color: #007aff;
+        }
+        .tab-item-add i {
+            font-size: 40px; /* “+”按钮图标可以更大更突出 */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="iphone-frame-container">
+        <h2>交易流水 (transactions_list.html)</h2>
+        <iframe src="transactions_list.html" id="transactions_list_frame" onload="resizeIframe(this)"></iframe>
+    </div>
+
+    <div class="iphone-frame-container">
+        <h2>记一笔 (add_transaction.html)</h2>
+        <iframe src="add_transaction.html" id="add_transaction_frame" onload="resizeIframe(this)"></iframe>
+    </div>
+
+    <div class="iphone-frame-container">
+        <h2>概览统计 (overview_stats.html)</h2>
+        <iframe src="overview_stats.html" id="overview_stats_frame" onload="resizeIframe(this)"></iframe>
+    </div>
+
+    <div class="iphone-frame-container">
+        <h2>分类管理 (category_management.html)</h2>
+        <iframe src="category_management.html" id="category_management_frame" onload="resizeIframe(this)"></iframe>
+    </div>
+
+    <div class="iphone-frame-container">
+        <h2>设置 (settings.html)</h2>
+        <iframe src="settings.html" id="settings_frame" onload="resizeIframe(this)"></iframe>
+    </div>
+
+    <!-- 模拟 iOS 底部 Tab Bar -->
+    <div class="bottom-tab-bar">
+        <a href="#" class="tab-item active">
+            <i class="fas fa-list-alt"></i>
+            <span>流水</span>
+        </a>
+        <a href="#" class="tab-item">
+            <i class="fas fa-chart-pie"></i>
+            <span>图表</span>
+        </a>
+        <a href="#" class="tab-item tab-item-add">
+            <i class="fas fa-plus-circle"></i>
+            <!-- <span>记账</span> -->
+        </a>
+        <a href="#" class="tab-item">
+            <i class="fas fa-folder"></i> <!-- 使用 folder 代表分类 -->
+            <span>分类</span>
+        </a>
+        <a href="#" class="tab-item">
+            <i class="fas fa-cog"></i>
+            <span>设置</span>
+        </a>
+    </div>
+
+    <script>
+        function resizeIframe(obj) {
+            obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
+        }
+        // 确保所有 iframe 加载后都调整一次大小
+        window.addEventListener('load', function() {
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach(iframe => {
+                // 对于已经加载完成的iframe (可能来自缓存)
+                if (iframe.contentWindow.document.readyState === 'complete') {
+                    resizeIframe(iframe);
+                }
+                // 对于尚未加载完成的，onload事件会处理
+            });
+        });
+    </script>
+</body>
+</html>

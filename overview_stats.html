@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>概览统计</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- 引入 Chart.js -->
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f0f2f5; /* 更适合统计页面的浅灰色背景 */
+            margin: 0;
+            padding: 0;
+        }
+        .status-bar {
+            height: 44px;
+            background-color: #f8f8f8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            font-size: 14px;
+            color: #000;
+            border-bottom: 1px solid #e0e0e0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .status-bar .time {
+            font-weight: 600;
+        }
+        .status-bar .indicators i {
+            margin-left: 5px;
+        }
+        .header-title {
+            text-align: center;
+            font-size: 17px;
+            font-weight: 600;
+            padding: 12px 0;
+            background-color: #f8f8f8;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .summary-card {
+            background-color: white;
+            border-radius: 12px; /* iOS 卡片圆角 */
+            padding: 16px;
+            margin: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+        .summary-item .label {
+            font-size: 15px;
+            color: #555;
+        }
+        .summary-item .value {
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .value.income { color: #28a745; } /* 绿色收入 */
+        .value.expense { color: #dc3545; } /* 红色支出 */
+        .value.balance { color: #17a2b8; } /* 蓝色结余 */
+
+        .chart-container-wrapper {
+            background-color: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 0 16px 16px 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- 模拟 iOS 状态栏 -->
+    <div class="status-bar">
+        <div class="time">9:41</div>
+        <div class="indicators">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-battery-three-quarters"></i>
+        </div>
+    </div>
+
+    <!-- 页面标题 -->
+    <div class="header-title">
+        概览统计
+    </div>
+
+    <!-- 收支总览卡片 -->
+    <div class="summary-card">
+        <div class="summary-item">
+            <span class="label">本月总收入</span>
+            <span class="value income">+ ¥12,500.00</span>
+        </div>
+        <div class="summary-item">
+            <span class="label">本月总支出</span>
+            <span class="value expense">- ¥3,850.50</span>
+        </div>
+        <div class="summary-item">
+            <span class="label">本月结余</span>
+            <span class="value balance">¥8,649.50</span>
+        </div>
+    </div>
+
+    <!-- 支出分类饼图 -->
+    <div class="chart-container-wrapper">
+        <div class="chart-title">支出分类占比 (本月)</div>
+        <canvas id="expensePieChart" width="300" height="300"></canvas> <!-- 调整宽高比例 -->
+    </div>
+
+    <!-- 收支趋势柱状图 -->
+    <div class="chart-container-wrapper">
+        <div class="chart-title">收支趋势 (近6个月)</div>
+        <canvas id="incomeExpenseBarChart" width="300" height="200"></canvas>
+    </div>
+    
+    <!-- 模拟底部安全区域 -->
+    <div class="h-16"></div>
+
+    <script>
+        // 支出分类饼图数据
+        const pieCtx = document.getElementById('expensePieChart').getContext('2d');
+        new Chart(pieCtx, {
+            type: 'doughnut', // 使用 doughnut 更现代
+            data: {
+                labels: ['餐饮美食', '交通出行', '购物消费', '生活服务', '娱乐'],
+                datasets: [{
+                    label: '支出占比',
+                    data: [1250.50, 550.00, 800.00, 750.00, 500.00],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)', // 餐饮 - 红
+                        'rgba(54, 162, 235, 0.7)', // 交通 - 蓝
+                        'rgba(255, 206, 86, 0.7)', // 购物 - 黄
+                        'rgba(75, 192, 192, 0.7)', // 生活 - 青
+                        'rgba(153, 102, 255, 0.7)' // 娱乐 - 紫
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, // 允许自定义宽高比
+                plugins: {
+                    legend: {
+                        position: 'bottom', // 图例放底部
+                        labels: {
+                            padding: 15,
+                            boxWidth: 12,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // 收支趋势柱状图数据
+        const barCtx = document.getElementById('incomeExpenseBarChart').getContext('2d');
+        new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: ['12月', '1月', '2月', '3月', '4月', '5月'],
+                datasets: [{
+                    label: '总收入',
+                    data: [7000, 7500, 8000, 7800, 8200, 12500],
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)', // 青色
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }, {
+                    label: '总支出',
+                    data: [3500, 3200, 4000, 3000, 3500, 3850.50],
+                    backgroundColor: 'rgba(255, 99, 132, 0.6)', // 红色
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value, index, values) {
+                                return '¥' + value / 1000 + 'k'; // 格式化Y轴标签
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                         labels: {
+                            padding: 10,
+                            boxWidth: 12,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

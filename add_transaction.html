@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>记一笔</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .status-bar {
+            height: 44px;
+            background-color: #f8f8f8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            font-size: 14px;
+            color: #000;
+            border-bottom: 1px solid #e0e0e0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .status-bar .time {
+            font-weight: 600;
+        }
+        .status-bar .indicators i {
+            margin-left: 5px;
+        }
+        .header-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: #f8f8f8;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .header-nav .cancel-btn {
+            color: #007aff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .header-nav .title {
+            font-size: 17px;
+            font-weight: 600;
+        }
+        .segmented-control {
+            display: flex;
+            justify-content: center;
+            padding: 10px;
+            background-color: #f8f8f8; /* 通常与导航栏背景一致或略深 */
+        }
+        .segmented-control button {
+            padding: 8px 20px;
+            border: 1px solid #007aff;
+            color: #007aff;
+            background-color: transparent;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .segmented-control button:first-child {
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+            border-right: none;
+        }
+        .segmented-control button:last-child {
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+        .segmented-control button.active {
+            background-color: #007aff;
+            color: white;
+        }
+        .form-group {
+            background-color: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+        }
+        .form-group label {
+            width: 80px; /* 固定标签宽度 */
+            color: #333;
+            font-size: 16px;
+        }
+        .form-group input[type="number"],
+        .form-group input[type="date"],
+        .form-group input[type="text"],
+        .form-group textarea,
+        .form-group select {
+            flex-grow: 1;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            color: #555;
+            background-color: transparent;
+        }
+        .form-group input[type="number"] {
+            text-align: right; /* 金额通常右对齐 */
+        }
+        .form-group .currency-symbol {
+            font-size: 20px;
+            font-weight: bold;
+            margin-right: 8px;
+            color: #333;
+        }
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        .category-selector {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .category-selector i {
+            margin-right: 8px;
+            color: #888;
+        }
+        .category-selector .selected-category {
+            color: #555;
+        }
+        .category-selector .chevron {
+            margin-left: auto;
+            color: #c7c7cc; /* iOS chevron color */
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- 模拟 iOS 状态栏 -->
+    <div class="status-bar">
+        <div class="time">9:41</div>
+        <div class="indicators">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-battery-three-quarters"></i>
+        </div>
+    </div>
+
+    <!-- 页面导航和标题 -->
+    <div class="header-nav">
+        <span class="cancel-btn">取消</span>
+        <span class="title">记一笔</span>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;</span> <!-- 占位保持标题居中 -->
+    </div>
+
+    <!-- 收入/支出切换 -->
+    <div class="segmented-control">
+        <button id="btn-expense" class="active">支出</button>
+        <button id="btn-income">收入</button>
+    </div>
+
+    <!-- 表单区域 -->
+    <div class="mt-2">
+        <!-- 金额 -->
+        <div class="form-group">
+            <label for="amount">金额</label>
+            <span class="currency-symbol">¥</span>
+            <input type="number" id="amount" placeholder="0.00" pattern="[0-9]*\.?[0-9]*">
+        </div>
+
+        <!-- 分类 -->
+        <div class="form-group">
+            <label for="category">分类</label>
+            <div class="category-selector flex-grow">
+                <i class="fas fa-utensils text-red-500"></i> <!-- 默认图标 -->
+                <span class="selected-category">餐饮</span>
+                <i class="fas fa-chevron-right chevron"></i>
+            </div>
+            <!-- 实际项目中这里点击会弹出选择器，原型中简化 -->
+            <!-- <select id="category" class="hidden">
+                <option value="food">餐饮</option>
+                <option value="transport">交通</option>
+            </select> -->
+        </div>
+
+        <!-- 日期 -->
+        <div class="form-group">
+            <label for="date">日期</label>
+            <input type="date" id="date" value="2024-05-11"> <!-- 默认今天 -->
+        </div>
+
+        <!-- 备注 -->
+        <div class="form-group">
+            <label for="notes">备注</label>
+            <textarea id="notes" placeholder="点击输入备注..."></textarea>
+        </div>
+    </div>
+
+    <!-- 保存按钮 -->
+    <div class="p-4 mt-6">
+        <button class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg text-lg">
+            保存
+        </button>
+    </div>
+
+    <!-- 模拟底部安全区域 -->
+    <div class="h-16"></div>
+
+    <script>
+        const btnExpense = document.getElementById('btn-expense');
+        const btnIncome = document.getElementById('btn-income');
+        const amountInput = document.getElementById('amount');
+        const currencySymbol = document.querySelector('.currency-symbol');
+        const categoryIcon = document.querySelector('.category-selector i:first-child');
+
+        // 获取今天的日期: YYYY-MM-DD
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('date').value = today;
+
+
+        btnExpense.addEventListener('click', () => {
+            btnExpense.classList.add('active');
+            btnIncome.classList.remove('active');
+            amountInput.placeholder = "0.00";
+            currencySymbol.textContent = "¥";
+            categoryIcon.className = 'fas fa-utensils text-red-500'; // 示例支出图标
+            // 可以在这里更新分类选择器的默认选项为支出类
+        });
+
+        btnIncome.addEventListener('click', () => {
+            btnIncome.classList.add('active');
+            btnExpense.classList.remove('active');
+            amountInput.placeholder = "0.00";
+            currencySymbol.textContent = "¥";
+            categoryIcon.className = 'fas fa-briefcase text-green-500'; // 示例收入图标
+            // 可以在这里更新分类选择器的默认选项为收入类
+        });
+    </script>
+
+</body>
+</html>
