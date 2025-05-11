@@ -17,5 +17,8 @@ interface TransactionDao {
     @Query("DELETE FROM transactions WHERE id = :transactionId")
     suspend fun deleteTransactionById(transactionId: String)
 
+    @Query("SELECT * FROM transactions WHERE strftime('%Y-%m', date) = :yearMonth ORDER BY date DESC")
+    fun getTransactionsByYearMonth(yearMonth: String): Flow<List<TransactionItem>>
+
     // Add other methods if needed, e.g., update, getById
 }

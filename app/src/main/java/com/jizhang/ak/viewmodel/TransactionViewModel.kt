@@ -11,11 +11,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest // Added
+import kotlinx.coroutines.flow.MutableStateFlow // Added
+import kotlinx.coroutines.flow.update // Added
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Calendar // Added
 import java.util.Locale
 import java.time.temporal.ChronoUnit
+import kotlinx.coroutines.ExperimentalCoroutinesApi // 确保导入
 
 // Data class for daily net income
 data class DailyNetIncome(val date: String, val netAmount: Double)
@@ -27,9 +32,36 @@ data class DailyFinancialSummary(
     val totalExpenses: Double
 )
 
+@OptIn(ExperimentalCoroutinesApi::class) // 添加注解以处理 flatMapLatest 等实验性 API
 class TransactionViewModel(private val transactionDao: TransactionDao) : ViewModel() {
-    val transactions: StateFlow<List<TransactionItem>> = transactionDao.getAllTransactions()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    private val _currentCalendar = MutableStateFlow(Calendar.getInstance())
+    val selectedYearMonth: StateFlow<String> = _currentCalendar.map { cal ->
+        String.format("%d-%02d", cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), getCurrentYearMonthString())
+
+    // Helper to get initial YYYY-MM string
+    private fun getCurrentYearMonthString(): String {
+        val cal = Calendar.getInstance()
+        return String.format("%d-%02d", cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1)
+    }
+
+    fun selectPreviousMonth() {
+        _currentCalendar.update { currentCal ->
+            (currentCal.clone() as Calendar).apply { add(Calendar.MONTH, -1) }
+        }
+    }
+
+    fun selectNextMonth() {
+        _currentCalendar.update { currentCal ->
+            (currentCal.clone() as Calendar).apply { add(Calendar.MONTH, 1) }
+        }
+    }
+
+    // Replace the old transactions StateFlow
+    val transactions: StateFlow<List<TransactionItem>> = selectedYearMonth.flatMapLatest { yearMonth ->
+        transactionDao.getTransactionsByYearMonth(yearMonth)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     // Flow for daily net income
     val dailyNetIncomeFlow: StateFlow<List<DailyNetIncome>> = transactions.map { trans ->

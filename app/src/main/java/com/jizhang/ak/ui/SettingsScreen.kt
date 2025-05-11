@@ -7,17 +7,21 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Help // 导入 AutoMirrored 版本
+import androidx.compose.material.icons.automirrored.filled.* // 导入 AutoMirrored 版本下的所有图标
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.jizhang.ak.viewmodel.AuthViewModel
 import com.jizhang.ak.ui.theme.JzTheme
+import kotlinx.coroutines.launch
 
 data class SettingItem(
     val title: String,
@@ -26,8 +30,9 @@ data class SettingItem(
 )
 
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(authViewModel: AuthViewModel = viewModel()) { // 接收 AuthViewModel
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
     val settingsItems = listOf(
         SettingItem("账户管理", Icons.Filled.ManageAccounts) { Toast.makeText(context, "账户管理功能待实现", Toast.LENGTH_SHORT).show() },
         SettingItem("分类管理", Icons.Filled.Category) { Toast.makeText(context, "分类管理功能待实现", Toast.LENGTH_SHORT).show() },
@@ -38,6 +43,7 @@ fun SettingsScreen() {
         SettingItem("关于我们", Icons.Filled.Info) { Toast.makeText(context, "关于我们功能待实现", Toast.LENGTH_SHORT).show() },
         SettingItem("检查更新", Icons.Filled.SystemUpdate) { Toast.makeText(context, "检查更新功能待实现", Toast.LENGTH_SHORT).show() },
         SettingItem("帮助与反馈", Icons.AutoMirrored.Filled.Help) { Toast.makeText(context, "帮助与反馈功能待实现", Toast.LENGTH_SHORT).show() }
+        // Logout button will be added separately
     )
 
     Scaffold(
@@ -56,7 +62,27 @@ fun SettingsScreen() {
         ) {
             items(settingsItems) { item ->
                 SettingRow(item = item)
-                HorizontalDivider(modifier = Modifier.padding(start = 72.dp)) // 重命名为 HorizontalDivider
+                HorizontalDivider(modifier = Modifier.padding(start = 72.dp))
+            }
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = {
+                        coroutineScope.launch {
+                            authViewModel.logout()
+                            // Navigation back to LoginScreen is handled by AppNavigation reacting to isLoggedIn state change
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                ) {
+                    Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = "Logout") // 尝试保留 AutoMirrored，因为导入已修复
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("退出登录")
+                }
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }

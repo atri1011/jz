@@ -7,13 +7,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.TrendingDown // 导入 AutoMirrored 版本
-import androidx.compose.material.icons.automirrored.filled.TrendingUp // 导入 AutoMirrored 版本
+import androidx.compose.material.icons.automirrored.filled.TrendingDown
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
+import androidx.compose.material.icons.automirrored.filled.ArrowLeft // Added
+import androidx.compose.material.icons.automirrored.filled.ArrowRight // Added
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember // Added
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,32 +33,10 @@ import com.jizhang.ak.data.TransactionType // 导入新的 TransactionType
 import com.jizhang.ak.ui.theme.JzTheme
 import com.jizhang.ak.viewmodel.TransactionViewModel
 import java.text.SimpleDateFormat
-import java.util.*
-
-@Composable
-fun FilterSectionPlaceholder() {
-    val context = LocalContext.current
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Button(onClick = { Toast.makeText(context, "切换到上个月 (模拟)", Toast.LENGTH_SHORT).show() }) {
-            Icon(Icons.Filled.ChevronLeft, contentDescription = "上个月")
-            Spacer(modifier = Modifier.width(4.dp))
-            Text("上个月")
-        }
-        Text("2024年5月", fontSize = 18.sp, fontWeight = FontWeight.SemiBold) // 日期可以动态更新
-        Button(onClick = { Toast.makeText(context, "切换到下个月 (模拟)", Toast.LENGTH_SHORT).show() }) {
-            Text("下个月")
-            Spacer(modifier = Modifier.width(4.dp))
-            Icon(Icons.Filled.ChevronRight, contentDescription = "下个月")
-        }
-    }
-}
+import java.util.Calendar // Added
+import java.util.Date // Added
+import java.util.Locale // Added
+import java.util.TimeZone // Added, though not strictly necessary for this exact format but good for completeness
 
 
 // 单个交易项卡片 - 更新以使用新的 TransactionItem 和处理 iconResId
@@ -132,13 +113,49 @@ fun TransactionRow(item: TransactionItem) {
 @Composable
 fun TransactionListScreen(transactionViewModel: TransactionViewModel = viewModel()) {
     val transactions by transactionViewModel.transactions.collectAsState()
+    val selectedYearMonthText by transactionViewModel.selectedYearMonth.collectAsState() // "YYYY-MM"
+
+    // Format selectedYearMonthText for display, e.g., "YYYY年MM月"
+    val displayMonthFormat = remember { SimpleDateFormat("yyyy年MM月", Locale.getDefault()) }
+    val internalMonthFormat = remember { SimpleDateFormat("yyyy-MM", Locale.getDefault()) }
+
+    val displayableMonth = remember(selectedYearMonthText) {
+        try {
+            val date = internalMonthFormat.parse(selectedYearMonthText)
+            if (date != null) {
+                displayMonthFormat.format(date)
+            } else {
+                selectedYearMonthText // Fallback
+            }
+        } catch (e: Exception) {
+            selectedYearMonthText // Fallback in case of parsing error
+        }
+    }
+
 
     Scaffold(
         topBar = {
             Column {
                 MockStatusBar()
                 ScreenTitle("交易流水")
-                FilterSectionPlaceholder() // 可以考虑也从ViewModel获取月份信息
+                // Month Selector UI
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = { transactionViewModel.selectPreviousMonth() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowLeft, contentDescription = "上个月")
+                    }
+                    Text(
+                        text = displayableMonth,
+                        style = MaterialTheme.typography.titleMedium, // Or h6 if you prefer larger
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    IconButton(onClick = { transactionViewModel.selectNextMonth() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowRight, contentDescription = "下个月")
+                    }
+                }
             }
         }
     ) { paddingValues ->
