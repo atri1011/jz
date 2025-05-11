@@ -32,71 +32,6 @@ import com.jizhang.ak.viewmodel.TransactionViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
-// MockStatusBar 和 ScreenTitle 函数保持不变 (已在 AddTransactionScreen 中复用)
-// MockStatusBar, ScreenTitle, FilterSectionPlaceholder 函数定义...
-// (此处省略这些函数的代码，假设它们与之前版本相同或已在其他地方定义并导入)
-
-@Composable
-fun MockStatusBar() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(44.dp)
-            .background(MaterialTheme.colorScheme.surfaceVariant)
-            .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        val currentTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
-        Text(
-            text = currentTime,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                Icons.Filled.SignalCellularAlt,
-                contentDescription = "Signal",
-                modifier = Modifier.size(18.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Icon(
-                Icons.Filled.Wifi,
-                contentDescription = "Wifi",
-                modifier = Modifier.size(18.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Icon(
-                Icons.Filled.BatteryFull,
-                contentDescription = "Battery",
-                modifier = Modifier.size(18.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-    }
-}
-
-@Composable
-fun ScreenTitle(title: String) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surfaceVariant)
-            .padding(vertical = 12.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = title,
-            fontSize = 17.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
-}
-
 @Composable
 fun FilterSectionPlaceholder() {
     val context = LocalContext.current
@@ -238,7 +173,7 @@ fun TransactionListScreen(transactionViewModel: TransactionViewModel = viewModel
 fun DefaultPreviewTransactionListScreen() {
     JzTheme {
         // For preview, we can pass a ViewModel with some sample data
-        val previewViewModel = TransactionViewModel()
+        val previewViewModel: TransactionViewModel = viewModel()
         // Add some sample data for preview if needed, or rely on default empty state
         previewViewModel.addTransaction(TransactionItem(amount = 100.0, type = TransactionType.EXPENSE, categoryName = "餐饮", date = "2024-05-10", note = "午餐"))
         previewViewModel.addTransaction(TransactionItem(amount = 2000.0, type = TransactionType.INCOME, categoryName = "工资", date = "2024-05-09"))

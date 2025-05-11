@@ -90,7 +90,7 @@ fun MainAppScreen() {
             composable(Screen.TransactionList.route) {
                 TransactionListScreen(transactionViewModel = transactionViewModel)
             }
-            composable(Screen.OverviewStats.route) { OverviewStatsScreen() } // ViewModel 暂不传递
+            composable(Screen.OverviewStats.route) { OverviewStatsScreen(viewModel = transactionViewModel) }
             composable(Screen.AddTransaction.route) {
                 AddTransactionScreen(navController = navController, transactionViewModel = transactionViewModel)
             }
