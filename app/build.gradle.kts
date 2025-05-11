@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("com.google.devtools.ksp") version "2.0.0-1.0.21"
-    kotlin("plugin.serialization") version "2.0.0"
+    // kotlin("plugin.serialization") version "2.0.0" // 移除序列化插件
 }
 
 android {
@@ -67,14 +67,14 @@ dependencies {
     // Kotlin Extensions and Coroutines support for Room
     implementation("androidx.room:room-ktx:$room_version")
 
-    // Ktor Client and Kotlinx Serialization
-    val ktor_version = "2.3.10" // 使用最新的 Ktor 版本
-    implementation("io.ktor:ktor-client-core:$ktor_version")
-    implementation("io.ktor:ktor-client-cio:$ktor_version") // CIO 引擎
-    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
-    implementation("io.ktor:ktor-client-logging:$ktor_version") // 可选，用于日志
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3") // Kotlinx Serialization
+    // // Ktor Client and Kotlinx Serialization // 移除 Ktor 和序列化相关依赖
+    // val ktor_version = "2.3.10"
+    // implementation("io.ktor:ktor-client-core:$ktor_version")
+    // implementation("io.ktor:ktor-client-cio:$ktor_version")
+    // implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
+    // implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+    // implementation("io.ktor:ktor-client-logging:$ktor_version")
+    // implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

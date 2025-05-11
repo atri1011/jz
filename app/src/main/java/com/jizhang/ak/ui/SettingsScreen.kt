@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.jizhang.ak.viewmodel.AuthViewModel
+// import com.jizhang.ak.viewmodel.AuthViewModel // 移除 AuthViewModel 导入
 import com.jizhang.ak.ui.theme.JzTheme
 import kotlinx.coroutines.launch
 
@@ -30,11 +30,11 @@ data class SettingItem(
 )
 
 @Composable
-fun SettingsScreen(authViewModel: AuthViewModel = viewModel()) { // 接收 AuthViewModel
+fun SettingsScreen() { // 移除 authViewModel 参数
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
+    val coroutineScope = rememberCoroutineScope() // coroutineScope 可能不再需要，除非有其他异步操作
     val settingsItems = listOf(
-        SettingItem("账户管理", Icons.Filled.ManageAccounts) { Toast.makeText(context, "账户管理功能待实现", Toast.LENGTH_SHORT).show() },
+        // SettingItem("账户管理", Icons.Filled.ManageAccounts) { Toast.makeText(context, "账户管理功能待实现", Toast.LENGTH_SHORT).show() }, // 移除账户管理
         SettingItem("分类管理", Icons.Filled.Category) { Toast.makeText(context, "分类管理功能待实现", Toast.LENGTH_SHORT).show() },
         SettingItem("数据导出", Icons.Filled.UploadFile) { Toast.makeText(context, "数据导出功能待实现", Toast.LENGTH_SHORT).show() },
         SettingItem("数据同步", Icons.Filled.Sync) { Toast.makeText(context, "数据同步功能待实现", Toast.LENGTH_SHORT).show() },
@@ -64,26 +64,26 @@ fun SettingsScreen(authViewModel: AuthViewModel = viewModel()) { // 接收 AuthV
                 SettingRow(item = item)
                 HorizontalDivider(modifier = Modifier.padding(start = 72.dp))
             }
-            item {
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(
-                    onClick = {
-                        coroutineScope.launch {
-                            authViewModel.logout()
-                            // Navigation back to LoginScreen is handled by AppNavigation reacting to isLoggedIn state change
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-                ) {
-                    Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = "Logout") // 尝试保留 AutoMirrored，因为导入已修复
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("退出登录")
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-            }
+            // item { // 移除退出登录按钮
+            //     Spacer(modifier = Modifier.height(16.dp))
+            //     Button(
+            //         onClick = {
+            //             coroutineScope.launch {
+            //                 // authViewModel.logout() // authViewModel 已移除
+            //                 // Navigation back to LoginScreen is handled by AppNavigation reacting to isLoggedIn state change
+            //             }
+            //         },
+            //         modifier = Modifier
+            //             .fillMaxWidth()
+            //             .padding(horizontal = 16.dp),
+            //         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+            //     ) {
+            //         Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = "Logout")
+            //         Spacer(modifier = Modifier.width(8.dp))
+            //         Text("退出登录")
+            //     }
+            //     Spacer(modifier = Modifier.height(16.dp))
+            // }
         }
     }
 }
